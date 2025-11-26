@@ -5,6 +5,8 @@ import mongoose from 'mongoose';
 import authRoutes from './routes/auth'; 
 import productRoutes from './routes/products';
 import orderRoutes from './routes/orders';
+import userRoutes from './routes/users';
+import statsRoutes from './routes/stats';
 dotenv.config();
 
 const app = express();
@@ -22,6 +24,8 @@ app.use(
 app.use('/api/auth', authRoutes); 
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/stats', statsRoutes);
 
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/giftify"; 
