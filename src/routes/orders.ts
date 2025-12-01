@@ -1,7 +1,19 @@
 import express from "express";
 import { Order } from "../models/order";
 
+
+
+
 const router = express.Router();
+
+router.get("/user/:email", async (req, res) => {
+  try {
+    const userOrders = await Order.find({ userEmail: req.params.email }).sort({ createdAt: -1 });
+    res.json(userOrders);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user orders" });
+  }
+});
 
 
 router.get("/", async (req, res) => {
