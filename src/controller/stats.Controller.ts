@@ -1,11 +1,9 @@
-import express from "express";
-import { User } from "../model/user";
+import { Request, Response } from "express";
 import { Product } from "../model/product";
+import { User } from "../model/user";
 import { Order } from "../model/order";
 
-const router = express.Router();
-
-router.get("/", async (req, res) => {
+export const getStats = async (req :Request, res: Response) => {
   try {
    
     const totalProducts = await Product.countDocuments();
@@ -24,6 +22,4 @@ router.get("/", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error fetching stats" });
   }
-});
-
-export default router;
+};

@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
-import { User } from "../model/user";
+import { Role, User } from "../model/user";
 import bcrypt from "bcryptjs";
+import { sign } from "crypto";
+import { signAccessToken } from "../utils/tokens";
 
 export const registerUser = async (req : Request,res : Response) => {
 
   try {
     
-    const { username, email, password, role } = req.body;
+    const { username, email, password } = req.body;
+
+    const role = Role.USER;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -15,6 +19,7 @@ export const registerUser = async (req : Request,res : Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    
 
     const newUser = new User({
       username,
@@ -45,19 +50,25 @@ export const loginUser = async (req : Request,res : Response) => {
 
 
     const isMatch = await bcrypt.compare(password, user.password);
+
+    
+
     if (!isMatch) {
       res.status(400).json({ message: "Invalid credentials" });
       return;
     }
 
+
+        const accessToken  = signAccessToken(user);
     
     res.json({ 
       message: "Login successful", 
-      user: {
+      data: {
         id: user._id,
         username: user.username,
         email: user.email,
-        role: user.role 
+        role: user.role ,
+        accessToken
       }
     });
 

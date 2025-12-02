@@ -2,11 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import authRoutes from './routes/auth'; 
-import productRoutes from './routes/products';
-import orderRoutes from './routes/orders';
-import userRoutes from './routes/users';
-import statsRoutes from './routes/stats';
+import authRoutes from './routes/auth.routes'; 
+import productRoutes from './routes/products.routes';
+import orderRoutes from './routes/orders.routes';
+import userRoutes from './routes/users.routes';
+import statsRoutes from './routes/stats.routes';
 dotenv.config();
 
 const app = express();
@@ -21,11 +21,11 @@ app.use(
 )
 
 
-app.use('/api/auth', authRoutes); 
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/stats', statsRoutes);
+app.use('/api/v1/auth', authRoutes); 
+app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/stats', statsRoutes);
 
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/giftify"; 
