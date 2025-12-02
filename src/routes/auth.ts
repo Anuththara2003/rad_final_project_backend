@@ -1,69 +1,16 @@
-import express from "express";
-import bcrypt from "bcryptjs";
-import { User } from "../models/user";
-
-const router = express.Router();
 
 
-router.post("/signup", async (req, res): Promise<void> => {
-  try {
-    
-    const { username, email, password, role } = req.body;
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      res.status(400).json({ message: "User already exists" });
-      return;
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-      role: role || "USER", 
-    });
-
-    await newUser.save();
-    res.status(201).json({ message: "User registered successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
-  }
-});
+import { Router } from "express";
+import { register } from "module";
+import { loginUser, registerUser } from "../controller/auth.Controller";
+import { get } from "http";
+import { getUserOrders } from "../controller/order.Controller";
 
 
-router.post("/login", async (req, res): Promise<void> => {
-  try {
-    const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      res.status(400).json({ message: "Invalid credentials" });
-      return;
-    }
-
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      res.status(400).json({ message: "Invalid credentials" });
-      return;
-    }
-
-    
-    res.json({ 
-      message: "Login successful", 
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role 
-      }
-    });
-
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
-  }
-});
-
-export default router;
+const routes = Router();
+ routes.post("/signup",registerUser);
+  routes.post("/login",loginUser);
+ 
+  
+  export default routes;

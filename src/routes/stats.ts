@@ -1,7 +1,7 @@
 import express from "express";
-import { User } from "../models/user";
-import { Product } from "../models/product";
-import { Order } from "../models/order";
+import { User } from "../model/user";
+import { Product } from "../model/product";
+import { Order } from "../model/order";
 
 const router = express.Router();
 
