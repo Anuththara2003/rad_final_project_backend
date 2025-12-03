@@ -7,9 +7,11 @@ import { AuthRequest } from "../middleware/authenticate";
 export const toggleWishlist = async (req:Request, res:Response)=> {
   try {
     const { email, productId } = req.body;
+      console.log("1. Request Received:", { email, productId });
     const user: any = await User.findOne({ email });
 
     if (!user) {
+      console.log("2. User Not Found");
       res.status(404).json({ message: "User not found" });
       return;
     }
@@ -21,13 +23,17 @@ export const toggleWishlist = async (req:Request, res:Response)=> {
     const wishlist = user.wishlist;
     const index = wishlist.indexOf(productId);
 
+
     if (index === -1) {
-      wishlist.push(productId); 
+     user. wishlist.push(productId); 
+       console.log("3. Item Added to Wishlist");
     } else {
-      wishlist.splice(index, 1); 
+     user. wishlist.splice(index, 1); 
+     console.log("3. Item Removed from Wishlist");
     }
 
     await user.save();
+    console.log("4. User Saved Successfully");
     res.json({ message: "Wishlist updated", wishlist: user.wishlist });
   } catch (error) {
     console.error("Wishlist Error:", error);
@@ -36,27 +42,69 @@ export const toggleWishlist = async (req:Request, res:Response)=> {
 };
 
 
-export const getWishlist = async (req:Request, res:Response)=> {
+
+
+// export const getWishlist = async (req:Request, res:Response)=> {
+//   try {
+//     const user: any = await User.findOne({ email: req.params.email });
+
+//     if (!user) {
+//       res.json([]);
+//       return;
+//     }
+//     if (!user.wishlist || user.wishlist.length === 0) {
+//       res.json([]); 
+//       return;
+//     }
+//     const products = await Product.find({ _id: { $in: user.wishlist } });
+
+//     res.json(products);
+
+//   } catch (error) {
+//     console.error("Wishlist Backend Error:", error); 
+//     res.status(500).json({ message: "Error fetching wishlist" });
+//   }
+// };
+
+// 1. Wishlist ලබා ගැනීම (Debug Version)
+export const getWishlist = async (req: Request, res: Response) => {
   try {
-    const user: any = await User.findOne({ email: req.params.email });
+    const { email } = req.params;
+    console.log("🔍 Checking Wishlist for:", email); // Log 1
+
+    const user: any = await User.findOne({ email });
 
     if (!user) {
+      console.log("❌ User Not Found");
       res.json([]);
       return;
     }
+
+    console.log("📋 User Wishlist IDs:", user.wishlist); // Log 2: IDs තියෙනවද බලන්න
+
     if (!user.wishlist || user.wishlist.length === 0) {
-      res.json([]); 
+      console.log("⚠️ Wishlist is Empty in Database");
+      res.json([]);
       return;
     }
-    const products = await Product.find({ _id: { $in: user.wishlist } });
 
-    res.json(products);
+    // IDs වලට අදාල Products හොයනවා
+    const wishlistProducts = await Product.find({ _id: { $in: user.wishlist } });
+    
+    console.log("✅ Found Products Count:", wishlistProducts.length); // Log 3: බඩු කීයක් හම්බුනාද
+
+    res.json(wishlistProducts);
 
   } catch (error) {
-    console.error("Wishlist Backend Error:", error); 
+    console.error("🔥 Wishlist Error:", error);
     res.status(500).json({ message: "Error fetching wishlist" });
   }
 };
+
+
+
+
+
 
 
 export const getAllUsers = async (req:Request, res:Response) => {
