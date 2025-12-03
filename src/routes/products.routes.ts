@@ -7,7 +7,7 @@ import { isAdmin } from "../middleware/isAdmin";
 const router = Router();
 
 router.post("/",authenticate,isAdmin, addProduct);
-router.get("/",authenticate,isAdmin, getProducts);
+router.get("/",authenticate, getProducts);
 router.post("/recommend",authenticate,getRecommendations);
 router.put("/:id",authenticate,isAdmin, updateProduct);
 router.delete("/:id",authenticate,isAdmin, deleteProduct);
