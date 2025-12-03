@@ -8,7 +8,7 @@ const router = Router();
 
 router.post("/",authenticate,isAdmin, addProduct);
 router.get("/",authenticate,isAdmin, getProducts);
-router.post("/recommend",authenticate,isAdmin,getRecommendations);
+router.post("/recommend",authenticate,getRecommendations);
 router.put("/:id",authenticate,isAdmin, updateProduct);
 router.delete("/:id",authenticate,isAdmin, deleteProduct);
 
