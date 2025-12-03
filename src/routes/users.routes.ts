@@ -4,7 +4,7 @@ import { authenticate } from "../middleware/authenticate";
 
 const router = Router();
 
-router.put("/wishlist", toggleWishlist);
+router.put("/wishlist",toggleWishlist);
 router.get("/wishlist/:email",getWishlist);
 router.get("/",getAllUsers);
 router.delete("/:id",deleteUser);
