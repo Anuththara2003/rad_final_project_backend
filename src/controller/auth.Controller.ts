@@ -1,19 +1,26 @@
 import { Request, Response } from "express";
 import { Role, User } from "../model/user";
 import bcrypt from "bcryptjs";
-import { sign } from "crypto";
+import crypto from "crypto";
 import { signAccessToken, signRefreshToken } from "../utils/tokens";
 import Jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { OAuth2Client } from "google-auth-library";
+
 
 dotenv.config()
 
+
+
+const client = new OAuth2Client(process.env.VITE_GOOGLE_CLIENT_ID);
+
+
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string
 
-export const registerUser = async (req : Request,res : Response) => {
+export const registerUser = async (req: Request, res: Response) => {
 
   try {
-    
+
     const { username, email, password } = req.body;
 
     const role = Role.USER;
@@ -25,13 +32,13 @@ export const registerUser = async (req : Request,res : Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    
+
 
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
-      role: role || "USER", 
+      role: role || "USER",
     });
 
     await newUser.save();
@@ -43,7 +50,7 @@ export const registerUser = async (req : Request,res : Response) => {
 
 
 
-export const loginUser = async (req : Request,res : Response) => {
+export const loginUser = async (req: Request, res: Response) => {
 
   try {
     const { email, password } = req.body;
@@ -57,7 +64,7 @@ export const loginUser = async (req : Request,res : Response) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
 
-    
+
 
     if (!isMatch) {
       res.status(400).json({ message: "Invalid credentials" });
@@ -65,16 +72,16 @@ export const loginUser = async (req : Request,res : Response) => {
     }
 
 
-        const accessToken  = signAccessToken(user);
-        const refreshToken = signRefreshToken(user);
-    
-    res.json({ 
-      message: "Login successful", 
+    const accessToken = signAccessToken(user);
+    const refreshToken = signRefreshToken(user);
+
+    res.json({
+      message: "Login successful",
       data: {
         id: user._id,
         username: user.username,
         email: user.email,
-        role: user.role ,
+        role: user.role,
         accessToken,
         refreshToken
       }
@@ -88,27 +95,87 @@ export const loginUser = async (req : Request,res : Response) => {
 
 
 export const handleRefreshToken = async (req: Request, res: Response) => {
-    try {
-        const { token } = req.body
+  try {
+    const { token } = req.body
 
-        if (!token) {
-            return res.status(400).json({ message: "Invalid or expired token" })
-        }
-
-        const payload = Jwt.verify(token, JWT_REFRESH_SECRET )
-        const user = await User.findById(payload.sub)
-
-        if (!user) {
-            return res.status(404).json({ message: "Invalid or expired token" })
-        }
-
-        const accessToken = signAccessToken(user)
-        res.status(200).json({ accessToken })
-
-
-    } catch (error) {
-        res.status(500).json({ message: "Invalid or expired token" })
+    if (!token) {
+      return res.status(400).json({ message: "Invalid or expired token" })
     }
+
+    const payload = Jwt.verify(token, JWT_REFRESH_SECRET)
+    const user = await User.findById(payload.sub)
+
+    if (!user) {
+      return res.status(404).json({ message: "Invalid or expired token" })
+    }
+
+    const accessToken = signAccessToken(user)
+    res.status(200).json({ accessToken })
+
+
+  } catch (error) {
+    res.status(500).json({ message: "Invalid or expired token" })
+  }
 }
 
 
+export const googleLogin = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { token } = req.body;
+
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    if (!payload) {
+      res.status(400).json({ message: "Invalid Google Token" });
+      return;
+    }
+
+    const { email, name, sub } = payload;
+
+
+    let user = await User.findOne({ email });
+
+
+    if (!user) {
+
+      const randomPassword = crypto.randomBytes(16).toString("hex");
+      const hashedPassword = await bcrypt.hash(randomPassword, 10);
+
+      user = await User.create({
+        username: name,
+        email: email,
+        password: hashedPassword,
+        role: Role.USER,
+        wishlist: []
+      });
+    }
+
+    const accessToken = signAccessToken(user);
+    const refreshToken = signRefreshToken(user);
+
+
+    res.json({
+      message: "Google Login Successful",
+      accessToken,
+      refreshToken,
+      data: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        accessToken,
+        refreshToken
+      }
+    });
+
+  } catch (error) {
+    console.error("Google Auth Error:", error);
+    res.status(500).json({ message: "Google Login Failed", error });
+  }
+};

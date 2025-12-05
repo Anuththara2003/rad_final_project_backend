@@ -1,7 +1,7 @@
 
 
 import { Router } from "express";
-import { handleRefreshToken, loginUser, registerUser } from "../controller/auth.Controller";
+import { googleLogin, handleRefreshToken, loginUser, registerUser } from "../controller/auth.Controller";
 
 const router = Router();
 
@@ -9,6 +9,7 @@ const router = Router();
   router.post("/login",loginUser);
 
   router.post("/refresh", handleRefreshToken);
+  router.post("/google", googleLogin);
  
   
   export default router;
