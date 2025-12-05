@@ -19,3 +19,19 @@ export const signAccessToken = (user: IUser) => {
         }
     )
 }
+
+
+
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string;
+
+export const signRefreshToken = (user: IUser) => {
+    return jwt.sign(
+        {
+            sub: user._id.toString()
+        },
+        JWT_REFRESH_SECRET,
+        {
+            expiresIn: "7d"
+        }
+    )
+}

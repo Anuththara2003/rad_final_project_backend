@@ -42,31 +42,6 @@ export const toggleWishlist = async (req:Request, res:Response)=> {
 };
 
 
-
-
-// export const getWishlist = async (req:Request, res:Response)=> {
-//   try {
-//     const user: any = await User.findOne({ email: req.params.email });
-
-//     if (!user) {
-//       res.json([]);
-//       return;
-//     }
-//     if (!user.wishlist || user.wishlist.length === 0) {
-//       res.json([]); 
-//       return;
-//     }
-//     const products = await Product.find({ _id: { $in: user.wishlist } });
-
-//     res.json(products);
-
-//   } catch (error) {
-//     console.error("Wishlist Backend Error:", error); 
-//     res.status(500).json({ message: "Error fetching wishlist" });
-//   }
-// };
-
-// 1. Wishlist ලබා ගැනීම (Debug Version)
 export const getWishlist = async (req: Request, res: Response) => {
   try {
     const { email } = req.params;
@@ -80,7 +55,7 @@ export const getWishlist = async (req: Request, res: Response) => {
       return;
     }
 
-    console.log("📋 User Wishlist IDs:", user.wishlist); // Log 2: IDs තියෙනවද බලන්න
+    console.log("📋 User Wishlist IDs:", user.wishlist); 
 
     if (!user.wishlist || user.wishlist.length === 0) {
       console.log("⚠️ Wishlist is Empty in Database");
@@ -88,10 +63,10 @@ export const getWishlist = async (req: Request, res: Response) => {
       return;
     }
 
-    // IDs වලට අදාල Products හොයනවා
+   
     const wishlistProducts = await Product.find({ _id: { $in: user.wishlist } });
     
-    console.log("✅ Found Products Count:", wishlistProducts.length); // Log 3: බඩු කීයක් හම්බුනාද
+    console.log("✅ Found Products Count:", wishlistProducts.length); 
 
     res.json(wishlistProducts);
 
