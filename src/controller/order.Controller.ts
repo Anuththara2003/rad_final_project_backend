@@ -60,3 +60,13 @@ export const getUserOrdersbyEmail = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error fetching orders", error });
   }
 };
+
+
+export const deleteOrder = async (req: Request, res: Response) => {
+  try {
+    await Order.findByIdAndDelete(req.params.id);
+    res.json({ message: "Order deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting order", error });
+  }
+};
