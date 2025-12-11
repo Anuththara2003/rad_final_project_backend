@@ -6,6 +6,7 @@ import { signAccessToken, signRefreshToken } from "../utils/tokens";
 import Jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { OAuth2Client } from "google-auth-library";
+import sendEmail from "../utils/sendEmail";
 
 
 dotenv.config()
@@ -177,5 +178,97 @@ export const googleLogin = async (req: Request, res: Response): Promise<void> =>
   } catch (error) {
     console.error("Google Auth Error:", error);
     res.status(500).json({ message: "Google Login Failed", error });
+  }
+};
+
+
+
+
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      // මෙතන return දැම්මේ නැත්නම් පහලට රන් වෙනවා. ඒකයි Error එක එන්නේ.
+      res.status(404).json({ message: "Email not found" });
+      return; 
+    }
+
+    // Token ජෙනරේට් කිරීම...
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    user.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000);
+
+    await user.save();
+
+    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+    const message = `You requested a password reset. Link: ${resetUrl}`;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: "Reset Your Giftify Password",
+        message: message,
+        url: resetUrl,
+      });
+
+      // මෙතනත් return දාන්න
+      res.status(200).json({ message: "Email sent successfully" });
+      return;
+
+    } catch (emailError) {
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save();
+
+      // මෙතනත් return දාන්න
+      res.status(500).json({ message: "Email could not be sent" });
+      return;
+    }
+
+  } catch (error) {
+    // මෙතනත් return දාන්න
+    res.status(500).json({ message: "Server Error", error });
+    return;
+  }
+};
+
+
+
+
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(req.params.token)
+      .digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      // වැදගත්ම තැන: මෙතන return නැත්නම් පහළට ගිහින් ආයේ res.json කරන්න හදනවා
+      res.status(400).json({ message: "Invalid or expired token" });
+      return; 
+    }
+
+    // Password වෙනස් කිරීම...
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(req.body.password, salt);
+
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully! Please login." });
+    return; // මෙතනත් පුරුද්දට return දාන්න
+
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error });
+    return;
   }
 };

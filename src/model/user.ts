@@ -12,6 +12,8 @@ export interface IUser extends Document {
   password: string;
   role: Role[];
   wishlist: mongoose.Types.ObjectId[]; 
+   resetPasswordToken?: string;
+  resetPasswordExpire?: Date;
 }
 
 const UserSchema = new mongoose.Schema({
@@ -24,6 +26,9 @@ const UserSchema = new mongoose.Schema({
     enum: Object.values(Role),
     default: [Role.USER],
   }, 
+
+  resetPasswordToken: { type: String },
+  resetPasswordExpire: { type: Date },
 
  
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
