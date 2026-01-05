@@ -107,7 +107,7 @@ src/
 ├── routes/         # API Route definitions
 ├── utils/          # Helpers (Email Sender, Token Generator)
 └── index.ts        # Application entry point
-
+```
 ## 🔗 API Endpoints Overview
 ```
 ### Auth
@@ -139,10 +139,10 @@ src/
 *   `GET /api/v1/stats` - Admin Dashboard Statistics
 ```
 
-```
-## 👨‍💻 Author
 
+## 👨‍💻 Author
 *   *Sandaru Perera* - [GitHub Profile](https://github.com/Anuththara2003)
-```
+
+
 
 
