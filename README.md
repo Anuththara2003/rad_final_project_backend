@@ -108,8 +108,9 @@ src/
 ├── utils/          # Helpers (Email Sender, Token Generator)
 └── index.ts        # Application entry point
 ```
-## 🔗 API Endpoints Overview
 ---
+## 🔗 API Endpoints Overview
+
 ### Auth
 *   `POST /api/v1/auth/signup` - Register New User
 *   `POST /api/v1/auth/login` - User Login
@@ -140,6 +141,7 @@ src/
   ---
 ## 👨‍💻 Author
 *   *Sandaru Perera* - [GitHub Profile](https://github.com/Anuththara2003)
+
 
 
 
