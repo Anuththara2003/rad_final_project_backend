@@ -108,46 +108,37 @@ src/
 ├── utils/          # Helpers (Email Sender, Token Generator)
 └── index.ts        # Application entry point
 
+## 🔗 API Endpoints Overview
 ```
-🔗 API Endpoints Overview
+### Auth
+*   `POST /api/v1/auth/signup` - Register New User
+*   `POST /api/v1/auth/login` - User Login
+*   `POST /api/v1/auth/google` - Google OAuth Login
+*   `POST /api/v1/auth/forgot-password` - Send Reset Link
+*   `PUT /api/v1/auth/resetpassword/:token` - Reset Password
 
-🔐 Authentication
+### Products
+*   `GET /api/v1/products` - Fetch All Products
+*   `POST /api/v1/products` - Add New Product (Admin)
+*   `POST /api/v1/products/recommend` - Get AI Recommendations
+*   `PUT /api/v1/products/:id` - Update Product Details
+*   `DELETE /api/v1/products/:id` - Remove Product
 
-POST /api/v1/auth/signup - Register new user
-POST /api/v1/auth/login - Login user
-POST /api/v1/auth/google - Google OAuth Login
-POST /api/v1/auth/forgot-password - Send password reset email
-PUT /api/v1/auth/resetpassword/:token - Reset password
+### Orders
+*   `POST /api/v1/orders` - Place New Order
+*   `GET /api/v1/orders` - Fetch All Orders (Admin)
+*   `GET /api/v1/orders/user/:email` - Fetch User Order History
+*   `PUT /api/v1/orders/:id` - Update Order Status
+*   `DELETE /api/v1/orders/:id` - Delete Order
 
-
-🎁 Products
-
-GET /api/v1/products - Get all products
-POST /api/v1/products - Add new product (Admin)
-PUT /api/v1/products/:id - Update product
-DELETE /api/v1/products/:id - Delete product
-POST /api/v1/products/recommend - Get recommendations (Quiz)
-
-
-📦 Orders
-
-POST /api/v1/orders - Place a new order
-GET /api/v1/orders - Get all orders (Admin)
-GET /api/v1/orders/user/:email - Get user-specific orders
-PUT /api/v1/orders/:id - Update order status
-DELETE /api/v1/orders/:id - Delete order
-
-
-👤 Users
-
-GET /api/v1/users - Get all users (Admin)
-GET /api/v1/users/wishlist/:email - Get user wishlist
-PUT /api/v1/users/wishlist - Add/Remove wishlist item
-DELETE /api/v1/users/:id - Remove user
-
-📊 Stats
-
-GET /api/v1/stats - Get Admin Dashboard analytics
+### Users & Stats
+*   `GET /api/v1/users` - Get All Registered Users (Admin)
+*   `DELETE /api/v1/users/:id` - Remove User (Admin)
+*   `GET /api/v1/users/wishlist/:email` - Fetch User Wishlist
+*   `PUT /api/v1/users/wishlist` - Toggle Wishlist Item
+*   `GET /api/v1/stats` - Admin Dashboard Statistics
+```
 
 👨‍💻 Author
 [Sandaru Perera] - [GitHub Profile](https://github.com/Anuththara2003)
+
