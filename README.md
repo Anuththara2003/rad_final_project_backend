@@ -109,7 +109,7 @@ src/
 └── index.ts        # Application entry point
 ```
 ## 🔗 API Endpoints Overview
-```
+---
 ### Auth
 *   `POST /api/v1/auth/signup` - Register New User
 *   `POST /api/v1/auth/login` - User Login
@@ -137,11 +137,10 @@ src/
 *   `GET /api/v1/users/wishlist/:email` - Fetch User Wishlist
 *   `PUT /api/v1/users/wishlist` - Toggle Wishlist Item
 *   `GET /api/v1/stats` - Admin Dashboard Statistics
-```
-
-
+  ---
 ## 👨‍💻 Author
 *   *Sandaru Perera* - [GitHub Profile](https://github.com/Anuththara2003)
+
 
 
 
