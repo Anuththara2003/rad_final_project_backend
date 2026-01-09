@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
+
 // Routes Imports
 import authRoutes from './routes/auth.routes'; 
 import productRoutes from './routes/products.routes';
@@ -33,7 +34,7 @@ app.use('/api/v1/stats', statsRoutes);
 
 
 // DB Connection
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/giftify"; 
+const MONGO_URI = process.env.MONGO_URI as string; 
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))

@@ -190,12 +190,12 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
 
     const user = await User.findOne({ email });
     if (!user) {
-      // මෙතන return දැම්මේ නැත්නම් පහලට රන් වෙනවා. ඒකයි Error එක එන්නේ.
+     
       res.status(404).json({ message: "Email not found" });
       return; 
     }
 
-    // Token ජෙනරේට් කිරීම...
+  
     const resetToken = crypto.randomBytes(20).toString("hex");
     user.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
     user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000);
@@ -213,7 +213,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
         url: resetUrl,
       });
 
-      // මෙතනත් return දාන්න
+     
       res.status(200).json({ message: "Email sent successfully" });
       return;
 
@@ -222,7 +222,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
       user.resetPasswordExpire = undefined;
       await user.save();
 
-      // මෙතනත් return දාන්න
+     
       res.status(500).json({ message: "Email could not be sent" });
       return;
     }
@@ -250,12 +250,11 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     });
 
     if (!user) {
-      // වැදගත්ම තැන: මෙතන return නැත්නම් පහළට ගිහින් ආයේ res.json කරන්න හදනවා
+    
       res.status(400).json({ message: "Invalid or expired token" });
       return; 
     }
 
-    // Password වෙනස් කිරීම...
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(req.body.password, salt);
 
@@ -265,7 +264,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     await user.save();
 
     res.status(200).json({ message: "Password updated successfully! Please login." });
-    return; // මෙතනත් පුරුද්දට return දාන්න
+    return; 
 
   } catch (error) {
     res.status(500).json({ message: "Server Error", error });
